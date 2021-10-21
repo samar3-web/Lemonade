@@ -51,11 +51,11 @@ class MainActivity : AppCompatActivity() {
         lemonImage = findViewById(R.id.image_lemon_state)
         setViewElements()
         lemonImage!!.setOnClickListener {
-            // TODO: call the method that handles the state when the image is clicked
+                        clickLemonImage()
         }
         lemonImage!!.setOnLongClickListener {
             // TODO: replace 'false' with a call to the function that shows the squeeze count
-            false
+            showSnackbar()
         }
     }
 
@@ -98,10 +98,27 @@ class MainActivity : AppCompatActivity() {
         //  UI can reflect the correct state
         when(lemonadeState){
             SELECT -> {
-
+                lemonSize=lemonTree.pick()
+                squeezeCount=0
+                lemonadeState=SQUEEZE;
+            }
+            SQUEEZE->{
+                squeezeCount+=1
+                lemonSize=1
+                if(lemonSize==0) {
+                    lemonadeState = DRINK
+                    lemonSize = -1
+                }
+            }
+            DRINK->{
+                lemonadeState=RESTART
+            }
+            else->{
+                lemonadeState=SELECT
             }
 
         }
+        setViewElements()
     }
 
     /**
@@ -117,6 +134,21 @@ class MainActivity : AppCompatActivity() {
         // TODO: Additionally, for each state, the lemonImage should be set to the corresponding
         //  drawable from the drawable resources. The drawables have the same names as the strings
         //  but remember that they are drawables, not strings.
+        when(lemonadeState){
+            SELECT->textAction.setText("click to select lemon!")
+            SQUEEZE->textAction.setText(" click to juice the lemon!")
+            DRINK->textAction.setText("click to drink your lemonade!")
+            RESTART->textAction.setText("click to start again!")
+        }
+        when(lemonadeState){
+            SELECT->lemonImage?.setImageResource((R.drawable.lemon_tree))
+            SQUEEZE->lemonImage?.setImageResource((R.drawable.lemon_squeeze))
+            DRINK->lemonImage?.setImageResource((R.drawable.lemon_drink))
+            RESTART->lemonImage?.setImageResource((R.drawable.lemon_restart))
+
+
+
+        }
     }
 
     /**
